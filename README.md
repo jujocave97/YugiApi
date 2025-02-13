@@ -36,6 +36,7 @@ yugioh-api/
 │── 📂 k8s/  
 │   ├── deployment.yaml   # Configuración de Kubernetes
 │   ├── service.yaml   # Configuración de Kubernetes
+│   ├── mongodb-deployment.yaml   # Configuración de Mongo para Kubernetes
 │── .dockerignore         # Archivos ignorados por Docker
 │── Dockerfile        # Archivo para Docker
 │── .gitignore            # Archivos ignorados por Git
