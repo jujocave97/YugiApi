@@ -1,3 +1,4 @@
+
 # Yugioh API - Express + Docker + Kubernetes
 
 ## 📌 Descripción
@@ -6,10 +7,13 @@ Esta es una API REST en **Node.js con Express** para gestionar cartas de Yu-Gi-O
 
 ## 🚀 Tecnologías
 
-- Node.js + Express
-- Docker
-- Kubernetes (Minikube)
-- YAML (para configuraciones de despliegue)
+- **Node.js + Express**: Node.js es una plataforma eficiente para desarrollar aplicaciones de red rápidas y escalables. Express es un framework minimalista para Node.js que facilita la creación de API RESTful. Es ideal para aplicaciones como la nuestra que necesitan manejar peticiones HTTP de forma rápida y sencilla.
+  
+- **Docker**: Docker permite contenerizar la aplicación y sus dependencias, lo que facilita su despliegue y ejecución en cualquier entorno. Esto garantiza que la aplicación funcione de la misma manera sin importar la máquina en la que se ejecute, simplificando la configuración y asegurando un entorno consistente.
+
+- **Kubernetes (Minikube)**: Kubernetes se utiliza para gestionar la orquestación de contenedores, proporcionando un sistema robusto para el despliegue, escalabilidad y gestión de aplicaciones en contenedores. Minikube nos permite ejecutar Kubernetes en un entorno local de manera simplificada, ideal para desarrolladores que necesitan simular entornos de producción sin necesidad de infraestructura compleja.
+
+- **YAML (para configuraciones de despliegue)**: YAML se utiliza para definir las configuraciones de Kubernetes (como los pods y servicios), lo que hace que el despliegue y la gestión de la infraestructura sea más sencilla y legible. Este formato facilita la automatización de tareas y el mantenimiento de la infraestructura de forma clara y precisa.
 
 ---
 
@@ -135,3 +139,4 @@ kubectl get services
 minikube service yugioh-service --url
 ```
 
+--- 
