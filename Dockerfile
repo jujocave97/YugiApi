@@ -1,20 +1,18 @@
-# Usar una imagen base de Node.js
+# Usa una imagen base de Node.js
 FROM node:18
 
-# Establecer el directorio de trabajo en el contenedor
+# Establece el directorio de trabajo en /app
 WORKDIR /app
 
-# Copiar los archivos del proyecto
-COPY package*.json ./
-
-# Instalar dependencias
-RUN npm install
-
-# Copiar el resto del código
+# Copia todos los archivos al contenedor
 COPY . .
 
-# Exponer el puerto 3000
-EXPOSE 3000
+# Instala las dependencias
+RUN npm install
 
-# Comando para ejecutar la app
-CMD ["node", "app.js"]
+# Expón el puerto que la aplicación va a usar
+EXPOSE 4000
+
+# Inicia la aplicación con nodemon
+CMD ["npm", "start"]
+
