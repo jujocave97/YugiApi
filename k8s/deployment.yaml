@@ -13,12 +13,69 @@ spec:
         app: yugiapi-express
     spec:
       containers:
-      - name: yugiapi
-        image: jujocave/yugiapi
-        ports:
-        - containerPort: 3000
-        env:
-          - name: MONGO_URI
-            value: "mongodb://mongodb:27017/yugibase" # Usar la dirección de MongoDB en Kubernetes
-          - name: PORT
-            value: "4000"
+        - name: yugiapi
+          image: jujocave/yugiapi:v7
+          ports:
+            - containerPort: 4000
+          env:
+            - name: DB_HOST
+              value: "mysql-service"  # Este debe ser el nombre del servicio de MySQL en Kubernetes
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              value: "password"
+            - name: DB_NAME
+              value: "yugibase"
+            - name: PORT
+              value: "4000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  clusterIP: None  # Esto permite que los pods de Express accedan a MySQL por nombre de servicio
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "password"
+            - name: MYSQL_DATABASE
+              value: "yugibase"
+          ports:
+            - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  clusterIP: None  # Usamos el nombre del servicio "mysql-service" para acceder desde la app de Node.js

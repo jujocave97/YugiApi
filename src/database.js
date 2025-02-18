@@ -1,17 +1,22 @@
-const mongoose = require('mongoose');
-require('dotenv').config(); // Cargar variables de entorno
+// En lugar de Mongoose para MongoDB
+// const mongoose = require('mongoose');
 
-// Cadena de conexión
-const URI = process.env.MONGO_URI || 'mongodb://localhost/yugibase';
+// Para MySQL
+const mysql = require('mysql2');
+require('dotenv').config(); // Cargar variables de entorno desde .env
 
-mongoose.connect(URI)
-  .then(() => console.log('✅ Conectado a MongoDB:', URI))
-  .catch(err => console.error('❌ Error al conectar a MongoDB:', err));
-
-const connection = mongoose.connection;
-
-connection.once('open', () => {
-    console.log('📡 MongoDB está listo para recibir conexiones');
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST || 'localhost', // Usando la variable de entorno
+  user: process.env.DB_USER || 'root',          // Usando la variable de entorno
+  password: process.env.DB_PASSWORD || 'password',     // Usando la variable de entorno
+  database: process.env.DB_NAME || 'yugibase'  // Usando la variable de entorno
+});
+connection.connect((err) => {
+  if (err) {
+    console.error('Error al conectar a MySQL: ', err.stack);
+    return;
+  }
+  console.log('Conexión a MySQL exitosa');
 });
 
 module.exports = connection;
