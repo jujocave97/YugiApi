@@ -1,9 +1,7 @@
-
-# Yugioh API - Express + Docker + Kubernetes
+# Yugioh API - Express + MySQL + Docker + Kubernetes
 
 ## 📌 Descripción
-
-Esta es una API REST en **Node.js con Express** para gestionar cartas de Yu-Gi-Oh!. Se puede desplegar con **Docker** y **Kubernetes (Minikube)**.
+Esta es una API REST en **Node.js con Express** para gestionar cartas de Yu-Gi-Oh!. Funciona con **MySQL** y se puede desplegar con **Docker** y **Kubernetes (Minikube)**.
 
 ## 🚀 Tecnologías
 
@@ -13,6 +11,8 @@ Esta es una API REST en **Node.js con Express** para gestionar cartas de Yu-Gi-O
 
 - **Kubernetes (Minikube)**: Kubernetes se utiliza para gestionar la orquestación de contenedores, proporcionando un sistema robusto para el despliegue, escalabilidad y gestión de aplicaciones en contenedores. Minikube nos permite ejecutar Kubernetes en un entorno local de manera simplificada, ideal para desarrolladores que necesitan simular entornos de producción sin necesidad de infraestructura compleja.
 
+- **MySQL**: MySQL es un sistema de gestión de bases de datos relacional (RDBMS) utilizado para almacenar información estructurada. Es altamente confiable y eficiente para manejar grandes volúmenes de datos.
+
 - **YAML (para configuraciones de despliegue)**: YAML se utiliza para definir las configuraciones de Kubernetes (como los pods y servicios), lo que hace que el despliegue y la gestión de la infraestructura sea más sencilla y legible. Este formato facilita la automatización de tareas y el mantenimiento de la infraestructura de forma clara y precisa.
 
 ---
@@ -21,27 +21,45 @@ Esta es una API REST en **Node.js con Express** para gestionar cartas de Yu-Gi-O
 
 ```
 yugioh-api/
+│── 📂 k8s/  
+│   ├── deployment.yaml   # Configuración de la API
+│   ├── mysql-deployment.yaml   # Configuración de MySQL
+│   ├── mysql-pv.yaml   # Volumen persistente
+│   ├── mysql-pvc.yaml   # Reclamo de volumen persistente
+│   ├── mysql-service.yaml   # Servicio de MySQL
+│   ├── service.yaml   # Servicio de la API
 │── 📂 src/
 │   ├── 📂 routes/        # Definición de rutas de la API
-│   │   ├── cards.js      # Rutas de las cartas
-│   ├── 📂 controller/   # Lógica de negocio
-│   │   ├── cartaController.js  
-│   ├── 📂 model/   # Modelos
-│   │   ├── carta.js  
-│   ├── 📂 routes/   # Rutas
-│   │   ├── carta.js  
-│   ├── app.js         # Configuración Express
-│   ├── database.js     # Configuración MongoDB
-│   ├── index.js         # Archivo principal de arranque
-│── 📂 k8s/  
-│   ├── deployment.yaml   # Configuración de Kubernetes
-│   ├── service.yaml   # Configuración de Kubernetes
-│   ├── mongodb-deployment.yaml   # Configuración de Mongo para Kubernetes
-│── .dockerignore         # Archivos ignorados por Docker
-│── Dockerfile        # Archivo para Docker
+│   │   ├── carta.js      # Rutas de las cartas
+│   ├── 📂 controllers/   # Lógica de negocio
+│   │   ├── carta.controller.js  
+│   ├── 📂 config/        # Configuración
+│   │   ├── database.js   # Configuración de MySQL
+│   ├── app.js           # Configuración Express
+│   ├── index.js         # Archivo principal
 │── .gitignore            # Archivos ignorados por Git
+│── Dockerfile            # Configuración de Docker
+│── .env.example          # Variables de entorno
 │── package.json          # Dependencias del proyecto
 │── README.md             # Documentación del proyecto
+```
+
+---
+
+## 🛠 Endpoints
+
+| Método | Endpoint     | Descripción              |
+| ------ | ------------ | ------------------------ |
+| GET    | `/api/yugiapi` | Obtiene todas las cartas |
+| POST   | `/api/yugiapi/crear` | Crea una carta |
+
+Ejemplo de respuesta:
+
+```json
+[
+  { "id": 1, "nombre": "Exodia", "atributo": "Luz", "ataque": 1000, "defensa": 1000, "imagen": "https://yugioh.fandom.com/es/wiki/Exodia?file=Foto_exodia%2C_el_prohibido.jpg"},
+  { "id": 2, "nombre": "Dragón Blanco de Ojos Azules", "atributo": "Luz", "ataque": 3000, "defensa": 2500, "imagen": "https://yugioh.fandom.com/es/wiki/Drag%C3%B3n_Blanco_de_Ojos_Azules?file=Foto_drag%C3%B3n_blanco_de_ojos_azules.jpg"}
+]
 ```
 
 ---
@@ -51,7 +69,7 @@ yugioh-api/
 ### 🔹 1. Clonar el repositorio
 
 ```sh
-git clone <URL_DEL_REPO>
+git clone https://github.com/jujocave97/YugiApi
 cd yugioh-api
 ```
 
@@ -61,48 +79,15 @@ cd yugioh-api
 npm install
 ```
 
-### 🔹 3. Ejecutar el servidor
+### 🔹 3. Configurar variables de entorno
+
+Copiar `.env.example` a `.env` y modificar los valores necesarios.
+
+### 🔹 4. Ejecutar el servidor
 
 ```sh
-node src/server.js
+node src/index.js
 ```
-
-El servidor correrá en [**http://localhost:3000**](http://localhost:3000)
-
----
-
-## 🛠 Endpoints
-
-| Método | Endpoint     | Descripción              |
-| ------ | ------------ | ------------------------ |
-| GET    | `/api/cards` | Obtiene todas las cartas |
-
-Ejemplo de respuesta:
-
-```json
-[
-  { "id": "23423452546hgv35v56hb", "nombre": "Exodia", "atributo": "Luz", "ataque": 1000, "defensa": 1000, "imagen": "https://yugioh.fandom.com/es/wiki/Exodia?file=Foto_exodia%2C_el_prohibido.jpg"},
-  { "id": "3jj8d8udfgdf8gdf87", "nombre": "Dragón Blanco de Ojos Azules", "atributo": "Luz", "ataque": 3000, "defensa": 2500, "imagen": "https://yugioh.fandom.com/es/wiki/Drag%C3%B3n_Blanco_de_Ojos_Azules?file=Foto_drag%C3%B3n_blanco_de_ojos_azules.jpg"}
-]
-```
-
----
-
-## 🐳 Contenerización con Docker
-
-### 🔹 1. Construir la imagen
-
-```sh
-docker build -t yugioh-api .
-```
-
-### 🔹 2. Ejecutar el contenedor
-
-```sh
-docker run -p 3000:3000 yugioh-api
-```
-
-El servicio estará disponible en [**http://localhost:3000**](http://localhost:3000)
 
 ---
 
@@ -114,24 +99,32 @@ El servicio estará disponible en [**http://localhost:3000**](http://localhost:3
 minikube start
 ```
 
-### 🔹 2. Construir la imagen dentro de Minikube
+### 🔹 2. Aplicar configuración de Kubernetes
 
 ```sh
-eval $(minikube docker-env)
-docker build -t yugioh-api:v1 .
+kubectl apply -f k8s/
 ```
 
-### 🔹 3. Aplicar configuración de Kubernetes
-
-```sh
-kubectl apply -f deploy/deployment.yaml
-```
-
-### 🔹 4. Verificar pods y servicios
+### 🔹 3. Verificar pods y servicios
 
 ```sh
 kubectl get pods
 kubectl get services
+```
+
+### 🔹 4. Crear tabla Carta en MySQL
+
+```sh
+kubectl exec -it mysql-deployment-XXXXXX -- mysql -u root -p
+USE yugibase;
+CREATE TABLE cartas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    atributo VARCHAR(255) NOT NULL,
+    ataque INT NOT NULL,
+    defensa INT NOT NULL,
+    imagen VARCHAR(255) NOT NULL
+);
 ```
 
 ### 🔹 5. Obtener la URL del servicio
@@ -140,4 +133,3 @@ kubectl get services
 minikube service yugioh-service --url
 ```
 
---- 
